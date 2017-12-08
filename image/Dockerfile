@@ -13,6 +13,7 @@ RUN apt-get update \
         npm \
         python3-dev \
         python-dev \
+        silversearcher-ag \
         vim \
     && rm -rf /var/lib/apt/lists/* \
     && npm install -g typescript
@@ -42,12 +43,14 @@ RUN apt-get update \
 COPY .vimrc /root/.vimrc
 
 # clone vundle
+RUN git clone https://github.com/VundleVim/Vundle.vim.git ~/.vim/bundle/Vundle.vim
+
 # run vim command to install plugins
+RUN vim +PluginInstall +qall
+
 # run ycmd build
 #   c#: --omnisharp-completer
-RUN git clone https://github.com/VundleVim/Vundle.vim.git ~/.vim/bundle/Vundle.vim \
-    && vim +PluginInstall +qall \
-    && cd ~/.vim/bundle/YouCompleteMe \
+RUN cd ~/.vim/bundle/YouCompleteMe \
     && ./install.py --clang-completer --gocode-completer --tern-completer
 
 ENTRYPOINT [ "/usr/bin/vim" ]
